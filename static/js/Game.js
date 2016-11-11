@@ -32,7 +32,7 @@ Game.prototype.initFakeSpider = function()
 	spider.position = new Vector(Math.random() * 4000 - 2000, Math.random() * 3000 - 1500)
 	this.spiders.push(spider);
 	setTimeout(this.initFakeSpider.bind(this), (Math.random() * 5 + 5) * 10);
-	if (this.spiders.length > 240)
+	if (this.spiders.length > /*240*/100)
 	{
 		this.removeOneHundredSpiders();
 	}
@@ -41,7 +41,7 @@ Game.prototype.initFakeSpider = function()
 
 Game.prototype.removeOneHundredSpiders = function()
 {
-	for (var i = 0; i < 100; i++)
+	for (var i = 0; i < /*100*/50; i++)
 	{
 		this.spiders.shift();
 	}
@@ -56,14 +56,19 @@ Game.prototype.initCanvas = function()
 {
 	this.canvas = document.getElementById("canvas");
 	this.ctx = this.canvas.getContext("2d");
-	this.initCanvasSize(800);
+	//this.initCanvasSize(800);
+	this.changeCanvasSize(window.innerWidth, window.innerHeight);
 }
 
-Game.prototype.initCanvasSize = function(width)
+Game.prototype.changeCanvasSize = function(width, height)
 {
-	var height = width / 16 * 9;
+	//var height = width / 16 * 9;
+	//this.canvas.width = width;
+	//this.canvas.height = height;
 	this.canvas.width = width;
 	this.canvas.height = height;
+	this.realWidth = width / 800;
+	this.realHeight = height / 450;
 }
 
 Game.prototype.initEvents = function()
@@ -137,12 +142,36 @@ Game.prototype.update = function(dt)
 Game.prototype.draw = function()
 {
 	this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+	this.drawLines(this.player.getX() % 18, this.player.getY() % 18);
 	this.player.draw(this.ctx);
 
 	for (var i = 0; i < this.spiders.length; i++)
 	{
 		var spider = this.spiders[i];
 		spider.draw(this.ctx);
+	}
+}
+
+Game.prototype.drawLines = function(offX, offY)
+{
+	//console.log("OFFSET =", offset)
+	for (var i = 0; i <= 25; i++)
+	{
+		var y = i * 18 - offY;
+		this.ctx.strokeStyle = "#eee";
+		this.ctx.beginPath();
+		this.ctx.moveTo(0, y);
+		this.ctx.lineTo(800, y);
+		this.ctx.stroke();
+	}
+	for (var j = 0; j <= 45; j++)
+	{
+		var x = j * 18 - offX;
+		this.ctx.strokeStyle = "#eee";
+		this.ctx.beginPath();
+		this.ctx.moveTo(x, 0);
+		this.ctx.lineTo(x, 450);
+		this.ctx.stroke();	
 	}
 }
 

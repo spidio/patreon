@@ -9,6 +9,8 @@ function Spider(x, y, color)
 	this.direction = new Vector(0, 0);
 	this.speed = 120;
 	this.speed = 180;
+	this.speed = 90;
+	this.speed = 90;
 	this.lifetime = 99999999;
 	this.image = document.getElementById("spiderImage");
 	this.radians = 0;
