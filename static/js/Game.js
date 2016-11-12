@@ -12,68 +12,54 @@ function Game()
 Game.prototype.init = function()
 {
 	this.initCanvas();
-	this.initSpiders();
 	this.initEvents();
+	this.initCamera();
+	this.initPlayer();
 	this.initMainloop(60);
-}
-
-Game.prototype.initSpiders = function()
-{
-	this.player = new Spider(100, 100, "lightblue");
-	this.initFakeSpider();
-	//setInterval(this.clearSpiders.bind(this), 20000);
-}
-
-Game.prototype.initFakeSpider = function()
-{
-	var spider = new Spider(0, 0, "black");
-	//spider.lifetime = (Math.random() * 10) + 5;
-	//spider.lifetime = (Math.random() * 10) + 10;
-	spider.position = new Vector(Math.random() * 4000 - 2000, Math.random() * 3000 - 1500)
-	this.spiders.push(spider);
-	setTimeout(this.initFakeSpider.bind(this), (Math.random() * 5 + 5) * 10);
-	if (this.spiders.length > /*240*/100)
-	{
-		this.removeOneHundredSpiders();
-	}
-	//setTimeout(this.initFakeSpider.bind(this), (Math.random() * 4 + 4) * 2);
-}
-
-Game.prototype.removeOneHundredSpiders = function()
-{
-	for (var i = 0; i < /*100*/50; i++)
-	{
-		this.spiders.shift();
-	}
-}
-
-Game.prototype.clearSpiders = function()
-{
-	this.spiders = [];
 }
 
 Game.prototype.initCanvas = function()
 {
 	this.canvas = document.getElementById("canvas");
 	this.ctx = this.canvas.getContext("2d");
-	//this.initCanvasSize(800);
-	this.changeCanvasSize(window.innerWidth, window.innerHeight);
+	this.setGameDimensions(window.innerWidth, window.innerHeight);
 }
 
-Game.prototype.changeCanvasSize = function(width, height)
+Game.prototype.initCamera = function()
 {
-	//var height = width / 16 * 9;
-	//this.canvas.width = width;
-	//this.canvas.height = height;
-	this.canvas.width = width;
-	this.canvas.height = height;
-	this.realWidth = width / 800;
-	this.realHeight = height / 450;
+	this.cp = new CanvasPixels();
+	this.cp.setCanvasSize(this.canvas.width, this.canvas.height);
+	this.cp.setVirtualSize(1280);
+	this.camera = new Camera();
+	this.camera.setPosition(new Vector(0, 0));
+	this.camera.setSize(this.cp.tovp(this.canvas.width), this.cp.tovp(this.canvas.height));
 }
 
 Game.prototype.initEvents = function()
 {
 	canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
+}
+
+Game.prototype.initPlayer = function()
+{
+	this.player = new Spider(0, 0, "blue");
+	this.addAFewSpiders(120);
+}
+
+Game.prototype.addAFewSpiders = function(amount)
+{
+	var moves = true;
+	for (var i = 0; i < amount; i++)
+	{
+		var spider = new Spider(Math.random() * 4000 - 2000, Math.random() * 3000 - 1500, "blue");
+		//spider.speed = 50;
+		if (!moves)
+			spider.speed = 0;
+		else
+			spider.speed = Math.random() * 90 + 45;
+		moves =! moves;
+		this.spiders.push(spider);
+	}
 }
 
 Game.prototype.initMainloop = function(fps)
@@ -82,7 +68,13 @@ Game.prototype.initMainloop = function(fps)
 	this.fpsInterval = 1000 / fps;
 	this.then = Date.now();
 
-    requestAnimationFrame(this.loop.bind(this));
+    requestAnimationFrame(this.tick.bind(this));
+}
+
+Game.prototype.setGameDimensions = function(width, height)
+{
+	this.canvas.width = width;
+	this.canvas.height = height ;
 }
 
 Game.prototype.handleMouseMove = function(event)
@@ -93,12 +85,12 @@ Game.prototype.handleMouseMove = function(event)
 	mx = Math.round(mx * (this.canvas.width / this.canvas.offsetWidth));
 	my = Math.round(my * (this.canvas.height / this.canvas.offsetHeight));
 
-	this.player.setDirection(new Vector(mx - 400, my - 225));
+	this.player.setDirection(new Vector(mx - window.innerWidth / 2, my - window.innerHeight / 2));						// FIX! VERY BAD AND MESSY CODE!!
 }
 
-Game.prototype.loop = function()
+Game.prototype.tick = function()
 {
-    requestAnimationFrame(this.loop.bind(this));
+    requestAnimationFrame(this.tick.bind(this));
 
     this.now = Date.now();
     this.elapsed = this.now - this.then;
@@ -107,42 +99,50 @@ Game.prototype.loop = function()
     {
     	var dt = this.elapsed;
         this.then = this.now - (this.elapsed % this.fpsInterval);
-        this.mainloop(dt / 1000);
+        this.mainloop(dt / 1000, dt);
     }
 }
 
-Game.prototype.mainloop = function(dt)
+Game.prototype.mainloop = function(dt, dtm)
 {
-	this.update(dt);
-	this.draw(dt);
+	this.update(dt, dtm);
+	this.draw(dt, dtm);
 }
 
-Game.prototype.update = function(dt)
+Game.prototype.update = function(dt, dtm)
 {
 	this.player.move(dt);
 
-	this.offsetX = this.player.getX();
-	this.offsetY = this.player.getY();
+	this.camera.setPosition(this.player.getPosition());
 
 	var length = this.spiders.length;
 	for (var i = 0; i < length; i++)
 	{
 		var spider = this.spiders[i];
+		//spider.move(dt);
+		//spider.tickLifetime(dt);
+		// if (spider.lifetime <= 0)
+		// {
+		// 	this.spiders.splice(i, 1);
+		// 	i--;
+		// 	length--;
+		// }
+		if (spider.speed != 0)
+			if (Math.random() < 5/100)
+			{
+				var vector = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)
+				var vec = spider.direction;
+				vec.addVector(vector);
+				spider.setDirection(vec);
+			}
 		spider.move(dt);
-		spider.tickLifetime(dt);
-		if (spider.lifetime <= 0)
-		{
-			this.spiders.splice(i, 1);
-			i--;
-			length--;
-		}
 	}
 }
 
 Game.prototype.draw = function()
 {
 	this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-	this.drawLines(this.player.getX() % 18, this.player.getY() % 18);
+	//this.drawLines(this.player.getX() % 18, this.player.getY() % 18);
 	this.player.draw(this.ctx);
 
 	for (var i = 0; i < this.spiders.length; i++)
@@ -175,12 +175,23 @@ Game.prototype.drawLines = function(offX, offY)
 	}
 }
 
-Game.prototype.x = function(amount)
-{
-	return amount - this.offsetX + 400;
-}
+// Game.prototype.x = function(amount)
+// {
+// 	var x = amount - this.offsetX + window.innerWidth / 2;
+// 	x /= window.innerWidth;
+// 	x *= window.innerWidth / 2;
+// 	return x;
+// }
 
-Game.prototype.y = function(amount)
+// Game.prototype.y = function(amount)
+// {
+// 	var y = amount - this.offsetY + window.innerHeight / 2;
+// 	y /= window.innerHeight;
+// 	y *= window.innerHeight / 2;
+// 	return y;
+// }
+
+Game.prototype.tcp = function(pixels)	// toCanvasPixels
 {
-	return amount - this.offsetY + 225;
+	return pixels
 }

@@ -4,11 +4,16 @@ function Spider(x, y, color)
 	this.size = 26;
 	this.size = 36;
 	this.size = 46;
-	this.center = -this.size/2;
+	this.sizeWidth = this.size + 32;
+	this.size = game.cp.from(this.size);
+	this.sizeWidth = game.cp.from(this.sizeWidth);
+	this.center = -this.size / 2;
+	this.centerOfSizeOfWidth = -this.sizeWidth / 2;
 	this.color = color;
 	this.direction = new Vector(0, 0);
 	this.speed = 120;
 	this.speed = 180;
+	this.speed = 90;
 	this.speed = 90;
 	this.speed = 90;
 	this.lifetime = 99999999;
@@ -25,23 +30,28 @@ Spider.prototype.draw = function(ctx)
 	//ctx.fillRect(395, 220, 10, 10);
 	var radians = this.radians; //change!
 
-	var x = game.x(this.position.x);
-	var y = game.y(this.position.y);
-	ctx.translate(x, y);
+	var cx = game.cp.from(game.camera.x(this.position.x));
+	var cy = game.cp.from(game.camera.y(this.position.y));
+	ctx.translate(cx, cy);
 	ctx.rotate(radians);
-	ctx.drawImage(this.image, this.center - 8, this.center, this.size + 16, this.size);
+	ctx.drawImage(this.image, this.centerOfSizeOfWidth, this.center, this.sizeWidth, this.size);
 	ctx.rotate(-radians);
-	ctx.translate(-x, -y);
+	ctx.translate(-cx, -cy);
 }
 
-Spider.prototype.getX = function()
-{
-	return this.position.x;
-}
+// Spider.prototype.getX = function()
+// {
+// 	return this.position.x;
+// }
 
-Spider.prototype.getY = function()
+// Spider.prototype.getY = function()
+// {
+// 	return this.position.y;
+// }
+
+Spider.prototype.getPosition = function()
 {
-	return this.position.y;
+	return this.position;
 }
 
 Spider.prototype.setDirection = function(vector)
@@ -66,7 +76,7 @@ Spider.prototype.move = function(dt)
 	//console.log("dt:", dt)
 	//console.log("movement:", movement)
 	this.position.addVector(movement);
-	this.limitPositionBounds(-2000, -1500, 2000, 1500);
+	//this.limitPositionBounds(-2000, -1500, 2000, 1500);
 
 	//this.position.addVector(new Vector(this.speed * -dt, this.speed * -dt));
 }
