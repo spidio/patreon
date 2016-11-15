@@ -1,53 +1,23 @@
 function Spider(x, y, color)
 {
 	this.position = new Vector(x, y);
-	this.size = 26;
-	this.size = 36;
-	this.size = 46;
-	this.sizeWidth = this.size + 32;
-	this.size = game.cp.from(this.size);
-	this.sizeWidth = game.cp.from(this.sizeWidth);
-	this.center = -this.size / 2;
-	this.centerOfSizeOfWidth = -this.sizeWidth / 2;
-	this.color = color;
+	// 36 : 46 [blue]
 	this.direction = new Vector(0, 0);
-	this.speed = 120;
-	this.speed = 180;
 	this.speed = 90;
-	this.speed = 90;
-	this.speed = 90;
+	this.speed = 25;
 	this.lifetime = 99999999;
-	this.image = document.getElementById("spiderImage");
+	this.sprite = new Sprite();
+	this.sprite.setImage(document.getElementById(color == "black" ? "img-spider-black" : "img-spider-blue"));
+	this.sprite.setAspectRatio("auto");
+	this.size = color == "black" ? 36 : 12;
+	this.sprite.setSize("auto", this.size);
 	this.radians = 0;
 }
 
 Spider.prototype.draw = function(ctx)
 {
-	
-	//radians = Math.PI / 180 * angle;
-	//angle = "meh"
-	//console.log("angle,radians:"+angle+","+radians)
-	//ctx.fillRect(395, 220, 10, 10);
-	var radians = this.radians; //change!
-
-	var cx = game.cp.from(game.camera.x(this.position.x));
-	var cy = game.cp.from(game.camera.y(this.position.y));
-	ctx.translate(cx, cy);
-	ctx.rotate(radians);
-	ctx.drawImage(this.image, this.centerOfSizeOfWidth, this.center, this.sizeWidth, this.size);
-	ctx.rotate(-radians);
-	ctx.translate(-cx, -cy);
+	this.sprite.draw(ctx, this.position, this.radians);
 }
-
-// Spider.prototype.getX = function()
-// {
-// 	return this.position.x;
-// }
-
-// Spider.prototype.getY = function()
-// {
-// 	return this.position.y;
-// }
 
 Spider.prototype.getPosition = function()
 {
@@ -73,12 +43,15 @@ Spider.prototype.move = function(dt)
 {
 	var movement = this.direction.copy();
 	movement.multiplyBoth(this.speed * dt);
-	//console.log("dt:", dt)
-	//console.log("movement:", movement)
 	this.position.addVector(movement);
-	//this.limitPositionBounds(-2000, -1500, 2000, 1500);
+	this.limitPositionBounds(-500, -375, 500, 375);
+}	
 
-	//this.position.addVector(new Vector(this.speed * -dt, this.speed * -dt));
+Spider.prototype.increaseStatsThisFunctionHasAWeirdName = function(dt)
+{
+	this.speed += dt * 2;
+	this.size += dt;
+	this.sprite.setSize("auto", this.size);
 }
 
 Spider.prototype.limitPositionBounds = function(x1, y1, x2, y2)

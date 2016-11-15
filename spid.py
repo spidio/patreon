@@ -70,7 +70,7 @@ def initializeGame():
 	game.initialize()
 
 def gameLoop():
-	print("tick")
+	pass
 
 
 

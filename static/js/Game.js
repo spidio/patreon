@@ -43,7 +43,7 @@ Game.prototype.initEvents = function()
 Game.prototype.initPlayer = function()
 {
 	this.player = new Spider(0, 0, "blue");
-	this.addAFewSpiders(120);
+	this.addAFewSpiders(10);
 }
 
 Game.prototype.addAFewSpiders = function(amount)
@@ -51,7 +51,7 @@ Game.prototype.addAFewSpiders = function(amount)
 	var moves = true;
 	for (var i = 0; i < amount; i++)
 	{
-		var spider = new Spider(Math.random() * 4000 - 2000, Math.random() * 3000 - 1500, "blue");
+		var spider = new Spider(Math.random() * /*4000*/1000 - /*2000*/500, Math.random() * /*3000*/750 - /*1500*/375, "black");
 		//spider.speed = 50;
 		if (!moves)
 			spider.speed = 0;
@@ -112,6 +112,7 @@ Game.prototype.mainloop = function(dt, dtm)
 Game.prototype.update = function(dt, dtm)
 {
 	this.player.move(dt);
+	this.player.increaseStatsThisFunctionHasAWeirdName(dt);
 
 	this.camera.setPosition(this.player.getPosition());
 
@@ -119,14 +120,6 @@ Game.prototype.update = function(dt, dtm)
 	for (var i = 0; i < length; i++)
 	{
 		var spider = this.spiders[i];
-		//spider.move(dt);
-		//spider.tickLifetime(dt);
-		// if (spider.lifetime <= 0)
-		// {
-		// 	this.spiders.splice(i, 1);
-		// 	i--;
-		// 	length--;
-		// }
 		if (spider.speed != 0)
 			if (Math.random() < 5/100)
 			{
