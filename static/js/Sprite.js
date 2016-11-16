@@ -26,12 +26,12 @@ Sprite.prototype.draw = function(ctx, position, radians)
 	position = position === undefined ? this.position : position;
 	var rotation = radians === undefined ? this.rotationRadians : radians;
 
-	var cx = game.cp.from(game.camera.x(position.x));
-	var cy = game.cp.from(game.camera.y(position.y));
-	var offsetX = game.cp.from(this.offsetX);
-	var offsetY = game.cp.from(this.offsetY);
-	var width = game.cp.from(this.width);
-	var height = game.cp.from(this.height);
+	var cx = game.camera.x(position.x);
+	var cy = game.camera.y(position.y);
+	var offsetX = game.camera.p(this.offsetX);
+	var offsetY = game.camera.p(this.offsetY);
+	var width = game.camera.p(this.width);
+	var height = game.camera.p(this.height);
 
 	ctx.translate(cx, cy);
 	ctx.rotate(rotation);

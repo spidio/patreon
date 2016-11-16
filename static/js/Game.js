@@ -136,13 +136,13 @@ Game.prototype.draw = function()
 {
 	this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 	//this.drawLines(this.player.getX() % 18, this.player.getY() % 18);
-	this.player.draw(this.ctx);
-
 	for (var i = 0; i < this.spiders.length; i++)
 	{
 		var spider = this.spiders[i];
 		spider.draw(this.ctx);
 	}
+
+	this.player.draw(this.ctx);
 }
 
 Game.prototype.drawLines = function(offX, offY)
