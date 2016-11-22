@@ -7,7 +7,7 @@ function Game()
 	this.fps, this.fpsInterval, this.now, this.then, this.elapsed;
 	this.player;
 	this.spiders = [];
-	this.ss = new SpidSocket("ws://localhost:8000/ws");
+	this.ss = new SpidSocket("ws://patreon.herokuapp.com/ws");
 }
 
 Game.prototype.init = function()
@@ -88,7 +88,7 @@ Game.prototype.handleMouseMove = function(event)
 
 	//this.player.setDirection(new Vector(mx - window.innerWidth / 2, my - window.innerHeight / 2));						// FIX! VERY BAD AND MESSY CODE!!
 	var dir = new Vector(mx - window.innerWidth / 2, my - window.innerHeight / 2);
-	
+
 	game.ss.sendPacket({
 		"d": {
 			"x": dir.x,
