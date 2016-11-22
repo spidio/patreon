@@ -7,6 +7,7 @@ function Game()
 	this.fps, this.fpsInterval, this.now, this.then, this.elapsed;
 	this.player;
 	this.spiders = [];
+	this.ss = new SpidSocket("ws://localhost:8000/ws");
 }
 
 Game.prototype.init = function()
@@ -85,7 +86,16 @@ Game.prototype.handleMouseMove = function(event)
 	mx = Math.round(mx * (this.canvas.width / this.canvas.offsetWidth));
 	my = Math.round(my * (this.canvas.height / this.canvas.offsetHeight));
 
-	this.player.setDirection(new Vector(mx - window.innerWidth / 2, my - window.innerHeight / 2));						// FIX! VERY BAD AND MESSY CODE!!
+	//this.player.setDirection(new Vector(mx - window.innerWidth / 2, my - window.innerHeight / 2));						// FIX! VERY BAD AND MESSY CODE!!
+	var dir = new Vector(mx - window.innerWidth / 2, my - window.innerHeight / 2);
+	
+	game.ss.sendPacket({
+		"d": {
+			"x": dir.x,
+			"y": dir.y,
+			"z": dir.z
+		}
+	});
 }
 
 Game.prototype.tick = function()

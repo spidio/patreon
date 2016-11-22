@@ -14,7 +14,7 @@ def SpidApp():
 
 	app = tornado.web.Application([
 		(r"/", MainHandler),
-		(r"/", GameHandler),
+		(r"/ws", GameHandler),
 	], **settings)
 
 	return app
@@ -64,7 +64,14 @@ class GameHandler(tornado.websocket.WebSocketHandler):
 		self.cons.remove(self)
 		game.disconnectPlayer(self)
 
+	def write_message_all(self, message):
+		print "write_message_all called with message..", message
+		for con in self.cons:
+			print "writing message to connection..", con
+			con.write_message(message)
+
 def initializeGame():
+	global game
 	game = spidy.createGameServer(loop)
 	game.setGameLoopCallback(gameLoop, 20)
 	game.initialize()

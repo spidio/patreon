@@ -50,30 +50,30 @@ Spider.prototype.move = function(dt)
 
 Spider.prototype.increaseStatsThisFunctionHasAWeirdName = function(dt)
 {
-	this.speed += dt * 1.5;
-	this.size += dt * .75;
-	this.sprite.setSize("auto", this.size);
-	//game.camera.setZoom(1 - this.size / 96)
-	//game.camera.setSize(2000, 1500)
-	game.camera.setZoom(48 / this.size)
-	// game.camera.setZoom((48 - 0) / (this.size + 1));
-	// game.camera.setZoom(((2 / 4) + this.size / ((2 - (2 / 4)) / 2)) / this.size);
+	// this.speed += dt * 1.5;
+	// this.size += dt * .75;
+	// this.sprite.setSize("auto", this.size);
+	// //game.camera.setZoom(1 - this.size / 96)
+	// //game.camera.setSize(2000, 1500)
+	// game.camera.setZoom(12 / this.size + 0.75) // 48 / 48 = 1, 1 - 0.2 = 0.8; 48 /96 = 0.5, 0.5 - 0.2 = 0.3
+	// // game.camera.setZoom((48 - 0) / (this.size + 1));
+	// // game.camera.setZoom(((2 / 4) + this.size / ((2 - (2 / 4)) / 2)) / this.size);
 
-	/*
+	// /*
 
-		0.5 => 96
-		1 => 48
-		2 => 24
+	// 	0.5 => 96
+	// 	1 => 48
+	// 	2 => 24
 
-	*/
+	// */
 
-	/*
+	// /*
 
-		48 => 1
-		96 => 0.51
-		192 => 0.27
+	// 	48 => 1
+	// 	96 => 0.51
+	// 	192 => 0.27
 
-	*/
+	// */
 }
 
 Spider.prototype.limitPositionBounds = function(x1, y1, x2, y2)

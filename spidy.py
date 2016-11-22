@@ -1,4 +1,5 @@
 import tornado.gen
+import json
 
 class Spidy:
 
@@ -26,7 +27,13 @@ class Spidy:
 		pass
 
 	def handleMessage(self, handler, message):
-		pass
+		print "got message..",message
+		print "handler of message..",handler
+		data = json.loads(message)
+		self.handlePacket(handler, data)
+
+	def handlePacket(self, handler, data):
+		handler.write_message_all(json.dumps(data))
 
 	def disconnectPlayer(self, handler):
 		pass
